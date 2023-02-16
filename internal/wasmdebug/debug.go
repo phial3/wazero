@@ -117,11 +117,10 @@ func (s *stackTrace) FromRecovered(recovered interface{}) error {
 		debug.PrintStack()
 	}
 
-	if exitErr, ok := recovered.(*sys.ExitError); ok { // Don't wrap an exit error!
-		return exitErr
-	}
-
 	stack := strings.Join(s.frames, "\n\t")
+	if exitErr, ok := recovered.(*sys.ExitError); ok {
+		return sys.NewExitErrorWithStackTrace(exitErr.ModuleName(), exitErr.ExitCode(), stack)
+	}
 
 	// If the error was internal, don't mention it was recovered.
 	if wasmErr, ok := recovered.(*wasmruntime.Error); ok {

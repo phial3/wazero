@@ -39,10 +39,15 @@ const (
 type ExitError struct {
 	moduleName string
 	exitCode   uint32
+	stackTrace string
 }
 
 func NewExitError(moduleName string, exitCode uint32) *ExitError {
 	return &ExitError{moduleName: moduleName, exitCode: exitCode}
+}
+
+func NewExitErrorWithStackTrace(moduleName string, exitCode uint32, stackTrace string) *ExitError {
+	return &ExitError{moduleName: moduleName, exitCode: exitCode, stackTrace: stackTrace}
 }
 
 // ModuleName is the api.Module that was closed.
@@ -53,6 +58,11 @@ func (e *ExitError) ModuleName() string {
 // ExitCode returns zero on success, and an arbitrary value otherwise.
 func (e *ExitError) ExitCode() uint32 {
 	return e.exitCode
+}
+
+// StackTrace returns the stack trace when the execution exits.
+func (e *ExitError) StackTrace() string {
+	return e.stackTrace
 }
 
 // Error implements the error interface.

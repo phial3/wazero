@@ -235,6 +235,9 @@ func doRun(args []string, stdOut io.Writer, stdErr logging.Writer, exit func(cod
 
 	if err != nil {
 		if exitErr, ok := err.(*sys.ExitError); ok {
+			if trace := exitErr.StackTrace(); len(trace) > 0 {
+				fmt.Fprintf(stdErr, "\nwasm stack trace:\n\t%s\n", exitErr.StackTrace())
+			}
 			exit(int(exitErr.ExitCode()))
 		}
 		fmt.Fprintf(stdErr, "error instantiating wasm binary: %v\n", err)
